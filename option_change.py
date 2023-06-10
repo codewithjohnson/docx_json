@@ -8,48 +8,57 @@ def convert_docx_to_json(docx_path):
     questions = []
     question = {}
     question_number = 0
-    current_attributes = {}
     current_explanation = ""
+    has_image = False
+    images = []
 
     for paragraph in doc.paragraphs:
         line = unidecode(paragraph.text.strip())
 
+        if line.lower() == "image: yes":
+            has_image = True
+        elif line.lower() == "image: no":
+            has_image = False
+
+        if has_image and line.startswith("Image URL:"):
+            image_url = line.split("Image URL:")[1].strip()
+            images.append(image_url)
+
         if line.startswith(str(question_number + 1) + "."):
             if question:
-                question["attributes"] = current_attributes
+                question["attributes"] = {
+                    "topic": current_topic,
+                    "year": current_year
+                }
                 question["explanation"] = current_explanation
+                question["has_image"] = has_image
+                if has_image:
+                    question["images"] = images
                 questions.append(question)
 
             question_number += 1
             question = {
                 "id": question_number,
                 "question": line[len(str(question_number)) + 1:].strip(),
-                "image": "",
                 "options": {},
                 "answer": "",
                 "attributes": {},
                 "explanation": ""
             }
-            current_attributes = {}
             current_explanation = ""
+            has_image = False
+            images = []
 
-        elif line.startswith("a."):
-            question["options"]["a"] = line[3:].strip()
-
-        elif line.startswith("b."):
-            question["options"]["b"] = line[3:].strip()
-
-        elif line.startswith("c."):
-            question["options"]["c"] = line[3:].strip()
-
-        elif line.startswith("d."):
-            question["options"]["d"] = line[3:].strip()
+        elif line.startswith(("a.", "b.", "c.", "d.")):
+            option_letter = line[0].lower()
+            option_text = line[3:].strip()
+            question["options"][option_letter] = option_text
 
         elif line.startswith("topic."):
-            current_attributes["topic"] = line.split("topic.")[1].strip()
+            current_topic = line.split("topic.")[1].strip()
 
         elif line.startswith("year."):
-            current_attributes["year"] = line.split("year.")[1].strip()
+            current_year = line.split("year.")[1].strip()
 
         elif line.startswith("explanation."):
             current_explanation = line.split("explanation.")[1].strip()
@@ -59,8 +68,14 @@ def convert_docx_to_json(docx_path):
             question["answer"] = answer_letter
 
     if question:
-        question["attributes"] = current_attributes
+        question["attributes"] = {
+            "topic": current_topic,
+            "year": current_year
+        }
         question["explanation"] = current_explanation
+        question["has_image"] = has_image
+        if has_image:
+            question["images"] = images
         questions.append(question)
 
     json_data = json.dumps(questions, indent=4)
