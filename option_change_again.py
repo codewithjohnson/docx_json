@@ -27,10 +27,10 @@ def convert_docx_to_json(docx_path):
                 "id": question_number,
                 "question": line[len(str(question_number)) + 1:].strip(),
                 "image": "",
-                "option_a": "",
-                "option_b": "",
-                "option_c": "",
-                "option_d": "",
+                "a": "",
+                "b": "",
+                "c": "",
+                "d": "",
                 "answer": "",
                 "topic": "",
                 "year": "",
@@ -41,16 +41,16 @@ def convert_docx_to_json(docx_path):
             current_explanation = ""
 
         elif line.startswith("a."):
-            question["option_a"] = line[3:].strip()
+            question["a"] = line[3:].strip()
 
         elif line.startswith("b."):
-            question["option_b"] = line[3:].strip()
+            question["b"] = line[3:].strip()
 
         elif line.startswith("c."):
-            question["option_c"] = line[3:].strip()
+            question["c"] = line[3:].strip()
 
         elif line.startswith("d."):
-            question["option_d"] = line[3:].strip()
+            question["d"] = line[3:].strip()
 
         elif line.startswith("topic."):
             current_topic = line.split("topic.")[1].strip()
@@ -63,15 +63,7 @@ def convert_docx_to_json(docx_path):
 
         elif line.startswith("answer."):
             answer_letter = line.split("answer.")[1].strip().lower()
-            answer_mapping = {
-                "a": "option_a",
-                "b": "option_b",
-                "c": "option_c",
-                "d": "option_d"
-            }
-            for option_key, option_value in answer_mapping.items():
-                if answer_letter == option_key:
-                    question["answer"] = option_value
+            question["answer"] = answer_letter
 
     if question:
         question["topic"] = current_topic

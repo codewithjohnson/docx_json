@@ -2,6 +2,7 @@
     {
         "id": 1,
         "question": "De jure sovereignty is acquired through",
+        "image": "",
         "option_a": "force",
         "option_b": "law",
         "option_c": "grant",
@@ -14,6 +15,7 @@
     {
         "id": 2,
         "question": "The political scientists that provided the typology of political culture were",
+        "image": "",
         "option_a": "John Locke and Thomas Hobbes",
         "option_b": "Karl Marx and V. I. Lenin",
         "option_c": "Gabriel Almond and Sidney Verba",
@@ -26,6 +28,7 @@
     {
         "id": 3,
         "question": "The political scientists who defined politics as 'Who gets what, when and how' is",
+        "image": "",
         "option_a": "Aristotle",
         "option_b": "Harold Laski",
         "option_c": "David Easton",
